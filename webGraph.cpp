@@ -32,6 +32,12 @@ webGraph::webGraph()
         searchList[webAddress] = temp;
     }
 
+    // initializing page rank for furhter iterations
+    for (auto it : webPages)
+    {
+        it->pageRank = (1 / (float)webPages.size());
+    }
+
     //---Insert webPages into graph---//
 
     ifstream edgesFile("edges.csv");
@@ -73,40 +79,87 @@ webGraph::webGraph()
             preKeyWords.erase(preKeyWords.begin());
         }
 
-        //cout<<web<<" ~ "<<preKeyWords<<"\n";
+        // cout<<web<<" ~ "<<preKeyWords<<"\n";
 
-      extracKeyWords = utilities::parsingKeyWords(preKeyWords);
-        // searchList[web]->keyWords.push_back("test");
-        // cout<<searchList[web]->impressions;
+        extracKeyWords = utilities::parsingKeyWords(preKeyWords);
+        searchList[web]->keyWords = extracKeyWords;
     }
-   // printGraph();
+    // printAll();
+
+    //--Constructing inverse adjacency list--//
+    for (auto it : adjList)
+    {
+        for (auto node : adjList[it.first])
+        {
+            addInvEdge(node, it.first);
+        }
+    }
+
+    int iterations = 10;
+    for(int i=0; i<iterations; i++)
+    {
+        pageRankIteration();
+        
+
+    }
+    
 }
 
 void webGraph::addEdge(webPage *src, webPage *dst)
 {
-    adjList[src].push_back(dst);   
+    adjList[src].push_back(dst);
+    src->hyperLinksCount++;
+}
+void webGraph::addInvEdge(webPage *src, webPage *dst)
+{
+    inv_adjList[src].push_back(dst);
 }
 
-void webGraph::printGraph()
+void webGraph::printAll()
 {
     for (auto it : adjList)
     {
-        cout << (it.first)->URL;
-        for(int i=0; i<it.second.size(); i++)
-        cout<<" ~ "<<it.second[i]->URL;
-        cout<<"\n";
-        
-        
-        /*
-                     To print keywords
+        cout << (it.first)->URL << "\n\n";
+        cout << "Hyperlinks:\n";
+        for (int i = 0; i < it.second.size(); i++)
+            cout << " ~ " << it.second[i]->URL;
+        cout << "\n\n";
 
-        for(int i=0; i<it.first->keyWords.size(); i++)
-        cout<<it.first->keyWords[i];
-        cout<<"\n";
+        cout << "Keywords:\n";
+        for (int i = 0; i < it.first->keyWords.size(); i++)
+            cout << " ~ " << it.first->keyWords[i];
+        cout << "\n";
 
-        */ 
+        cout << "\nLogistics:\n";
+        cout << "Impressions: " << it.first->impressions << "\n";
+        cout << "Clicks: " << it.first->clicks << "\n";
+        cout << "CTR: " << it.first->ctr << "\n";
+        cout << "pageRank: " << it.first->pageRank << "\n";
+        cout << "Score: " << it.first->score << "\n";
+        cout << "hyperLinksCount: " << it.first->hyperLinksCount << "\n";
+
+        cout << "\n\n";
     }
-    
+}
+
+void webGraph::pageRankIteration()
+{
+    for (auto it : inv_adjList)
+    {
+        it.first->tempPageRank = 0;
+        cout<<it.first->URL<<"\n";
+        for (auto node : inv_adjList[it.first])
+        {
+            cout<<node->URL<<" - "<<node->pageRank<<" - "<<node->hyperLinksCount<<"\n";
+            it.first->tempPageRank += node->pageRank / node->hyperLinksCount;
+        }
+    }
+    for (auto it2 : webPages)
+    {
+        it2->pageRank = it2->tempPageRank;
+        cout<<it2->URL<<"~~"<<it2->pageRank<<"\n";
+    }
+    cout<<"\n\n";
 }
 
 webGraph::~webGraph()

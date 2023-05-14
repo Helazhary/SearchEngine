@@ -8,10 +8,14 @@ struct webPage
 {
     //--------Components of a webPage-------//
     string URL;
-    float impressions;
+    int impressions;
     int clicks;
-    int pageRank;
+    float pageRank;
+    float tempPageRank;
+    int ctr;
     int score;
+    int hyperLinksCount;
+    
     vector<string> keyWords;
 
     //----overloading Comparison Operator Using webPage score----//
@@ -26,8 +30,10 @@ struct webPage
         URL = url;
         impressions = 0;
         clicks = 0;
+        ctr = 0;
         pageRank = 0;
         score = 0;
+        hyperLinksCount = 0;
     }
 };
 
@@ -36,6 +42,8 @@ class webGraph
 public:
     // adjacency list to represent the webGraph
     map<webPage *, vector<webPage *>> adjList;
+    // inverse adjacency list to represent the webPages that point to a webPage
+    map<webPage *, vector<webPage *>> inv_adjList;
     // vector to store the individual webPages
     vector<webPage *> webPages;
     // search list by webAddress/name
@@ -44,7 +52,11 @@ public:
     vector<string> parsingKeyWords(string sentence);
 
     void addEdge(webPage *src, webPage *dst);
-    void printGraph();
+    void addInvEdge(webPage *src, webPage *dst);
+
+    void pageRankIteration();
+
+    void printAll();
 
     webGraph();
     ~webGraph();
