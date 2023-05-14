@@ -10,6 +10,7 @@ class utilities
 public:
     utilities();
    static vector<string> parsingSentence(string sentence);
+    static vector<string> parsingKeyWords(string sentence);
     ~utilities();
    
     

@@ -28,7 +28,6 @@ struct webPage
         clicks = 0;
         pageRank = 0;
         score = 0;
-        keyWords = {};
     }
 };
 
@@ -36,16 +35,16 @@ class webGraph
 {
 public:
     // adjacency list to represent the webGraph
-    map<webPage *, list<webPage *>> adjList;
+    map<webPage *, vector<webPage *>> adjList;
     // vector to store the individual webPages
     vector<webPage *> webPages;
     // search list by webAddress/name
     map<string, webPage *> searchList;
 
     vector<string> parsingKeyWords(string sentence);
-    
+
     void addEdge(webPage *src, webPage *dst);
-     
+    void printGraph();
 
     webGraph();
     ~webGraph();

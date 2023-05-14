@@ -1,4 +1,5 @@
 #include "webGraph.h"
+#include "utilities.h"
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -27,7 +28,6 @@ webGraph::webGraph()
 
         webPage *temp = new webPage(webAddress);
         temp->impressions = stof(impressionNum);
-        temp->URL = webAddress;
         webPages.push_back(temp);
         searchList[webAddress] = temp;
     }
@@ -47,8 +47,10 @@ webGraph::webGraph()
         string src, dst;
         getline(ss, src, ',');
         getline(ss, dst);
+
         while (dst[0] == ' ')
             dst.erase(dst.begin());
+
         addEdge(searchList[src], searchList[dst]);
     }
 
@@ -59,7 +61,7 @@ webGraph::webGraph()
     {
         cout << "Error: Unable to open keyWords file.\n";
     }
-    vector<string> keyWords;
+    vector<string> extracKeyWords = {};
     while (getline(keyWordFile, line_k))
     {
         stringstream ss(line_k);
@@ -70,34 +72,41 @@ webGraph::webGraph()
         {
             preKeyWords.erase(preKeyWords.begin());
         }
-        parsingKeyWords("hello,bello");
-        //keyWords = parsingKeyWords(preKeyWords);
-    }
-}
-vector<string> parsingKeyWords(string sentence)
-{
-    string word = "";
-    vector<string> words;
 
-    for (auto letter : sentence)
-    {
-        if (letter == ',')
-        {
-            words.push_back(word);
-            word = "";
-        }
-        else
-        {
-            word += letter;
-        }
-    }
-    words.push_back(word);
+        //cout<<web<<" ~ "<<preKeyWords<<"\n";
 
-    return words;
+      extracKeyWords = utilities::parsingKeyWords(preKeyWords);
+        // searchList[web]->keyWords.push_back("test");
+        // cout<<searchList[web]->impressions;
+    }
+   // printGraph();
 }
+
 void webGraph::addEdge(webPage *src, webPage *dst)
 {
-    adjList[src].push_back(dst);
+    adjList[src].push_back(dst);   
+}
+
+void webGraph::printGraph()
+{
+    for (auto it : adjList)
+    {
+        cout << (it.first)->URL;
+        for(int i=0; i<it.second.size(); i++)
+        cout<<" ~ "<<it.second[i]->URL;
+        cout<<"\n";
+        
+        
+        /*
+                     To print keywords
+
+        for(int i=0; i<it.first->keyWords.size(); i++)
+        cout<<it.first->keyWords[i];
+        cout<<"\n";
+
+        */ 
+    }
+    
 }
 
 webGraph::~webGraph()
