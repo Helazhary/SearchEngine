@@ -1,0 +1,19 @@
+Objectives:
+
+1. Reads from edges file and makes webPage instances that are stored 
+in the adjList
+2. Reads from impressions and puts that number in each instance, searched in the map
+3. Reads from keywords and adds words to the vector keyWords searched using the map
+
+
+
+
+
+Be able to:
+- search keywords with operators ("", AND, OR)
+- looks through all websites and checks for keywords
+- brings up a list of website URLs with these keywords based on score
+- increments impression by display and clicks if the user selects the webNumber
+
+
+
