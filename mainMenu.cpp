@@ -41,11 +41,6 @@ void mainMenu::searchDisplay()
     map<string, bool> keys;
     int pageNum = 0;
 
-    cout << "\n";
-    for (auto word : searchWords)
-        cout << word << "\n";
-    cout << "\n";
-
     // 1 word case
     if (searchWords.size() == 1)
     {
@@ -67,14 +62,8 @@ void mainMenu::searchDisplay()
     } // parentheses case
     else if (searchWords[0].front() == '\"')
     {
-        cout << "\n";
-        cout << searchWords[0] << "\n";
-        cout << searchWords[1] << "\n";
         searchWords[1].pop_back();
         searchWords[0].erase(searchWords[0].begin());
-        cout << "\n";
-        cout << searchWords[0] << "\n";
-        cout << searchWords[1] << "\n";
 
         for (int web = 0; web < webPages.size(); web++)
         {
@@ -191,6 +180,7 @@ void mainMenu::interactiveDisplay(vector<webPage *> searchResults)
             cin >> webSelection;
         }
         searchResults[webSelection - 1]->clicks++;
+        system("clear");
         cout << "Visited: " << searchResults[webSelection - 1]->URL << "\n";
         interactiveDisplay(searchResults);
     }
