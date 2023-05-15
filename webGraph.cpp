@@ -9,8 +9,8 @@ webGraph::webGraph()
     webPages = {};
     searchList = {};
 
-    //--Insert webPages into vector for ease of external access--//
-    //---Copy impressions to the webPage struct variable---//
+    //--Insert webPage pointers into vector for external access--//
+    //---Copy variables to webPage struct variables and push to vector---//
     ifstream impressionsFile("impressions.csv");
     if (!impressionsFile.is_open())
     {
@@ -86,7 +86,6 @@ webGraph::webGraph()
         extracKeyWords = utilities::parsingKeyWords(preKeyWords);
         searchList[web]->keyWords = extracKeyWords;
     }
-    
 
     //--Constructing inverse adjacency list--//
     for (auto it : adjList)
@@ -104,12 +103,12 @@ webGraph::webGraph()
     }
 
     clearVisited();
-
     CTRCalc();
     scoreCalc();
-    printAll();
+    // printAll();
 }
 
+// function to calculate CTR
 void webGraph::CTRCalc()
 {
     for (auto page : webPages)
@@ -121,25 +120,30 @@ void webGraph::CTRCalc()
     }
 }
 
+// Function to calculate Score
 void webGraph::scoreCalc()
 {
     for (auto page : webPages)
     {
         page->score = 0.4 * page->pageRank + ((1 - ((0.1 * page->impressions) / (1 + 0.1 * page->impressions)) * page->pageRank + ((0.1 * page->impressions) / (1 + 0.1 * page->impressions) * page->CTR) * 0.6));
-        //cout<<"PAGE SCORE: "<<page->score<<"\n";
+        // cout<<"PAGE SCORE: "<<page->score<<"\n";
     }
 }
 
+// function to addEdge to assist graph creation
 void webGraph::addEdge(webPage *src, webPage *dst)
 {
     adjList[src].push_back(dst);
     src->hyperLinksCount++;
 }
+
+// function to add inverse Edges to assist with inverse graph creation (transposed)
 void webGraph::addInvEdge(webPage *src, webPage *dst)
 {
     inv_adjList[src].push_back(dst);
 }
 
+// prints everything (useful for debugging)
 void webGraph::printAll()
 {
     for (auto it : adjList)
@@ -167,6 +171,7 @@ void webGraph::printAll()
     }
 }
 
+// iterations of page rank for convergence
 void webGraph::pageRankIteration()
 {
     for (auto it : inv_adjList)
@@ -186,9 +191,11 @@ void webGraph::pageRankIteration()
     }
     // cout<<"\n\n";
 }
+
+// initialize bool map to false/unvisited
 void webGraph::clearVisited()
 {
-    // initialize bool map to false/unvisited
+
     for (auto page : webPages)
         visited[page] = false;
 }

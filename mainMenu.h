@@ -6,19 +6,14 @@ using namespace std;
 
 #pragma once
 
-
 class mainMenu : public webGraph
 {
 public:
-    mainMenu();
-    void searchDisplay();
-    void interactiveDisplay(vector<webPage*> searchResults);
-   static bool cmpScore(webPage *x, webPage *y);
-    void sortSearchResults(vector<webPage*> searchResults);
-    ~mainMenu();    
-
-private:
-
+    mainMenu();                                               // constructor (runs program)
+    void searchDisplay();                                     // Opens up action options
+    void interactiveDisplay(vector<webPage *> searchResults); // displays all websites from search
+    static bool cmpScore(webPage *x, webPage *y);             // used to sort webpage results by score
+    ~mainMenu();                                              // deconstructor for program termination
 };
 
 #endif
