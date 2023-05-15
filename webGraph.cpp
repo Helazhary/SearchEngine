@@ -20,14 +20,18 @@ webGraph::webGraph()
     while (getline(impressionsFile, line_i))
     {
         stringstream ss(line_i);
-        string impressionNum, webAddress;
+        string webAddress, impressionNum, clicksNum;
         getline(ss, webAddress, ',');
-        getline(ss, impressionNum);
+        getline(ss, impressionNum, ',');
+        getline(ss, clicksNum);
         while (impressionNum[0] == ' ')
             impressionNum.erase(impressionNum.begin());
+        while (clicksNum[0] == ' ')
+            clicksNum.erase(clicksNum.begin());
 
         webPage *temp = new webPage(webAddress);
         temp->impressions = stof(impressionNum);
+        temp->clicks = stof(clicksNum);
         webPages.push_back(temp);
         searchList[webAddress] = temp;
     }
@@ -79,11 +83,10 @@ webGraph::webGraph()
             preKeyWords.erase(preKeyWords.begin());
         }
 
-
         extracKeyWords = utilities::parsingKeyWords(preKeyWords);
         searchList[web]->keyWords = extracKeyWords;
     }
-    // printAll();
+    
 
     //--Constructing inverse adjacency list--//
     for (auto it : adjList)
@@ -95,13 +98,36 @@ webGraph::webGraph()
     }
 
     int iterations = 10;
-    for(int i=0; i<iterations; i++)
+    for (int i = 0; i < iterations; i++)
     {
-        pageRankIteration(); 
+        pageRankIteration();
     }
 
     clearVisited();
-    
+
+    CTRCalc();
+    scoreCalc();
+    printAll();
+}
+
+void webGraph::CTRCalc()
+{
+    for (auto page : webPages)
+    {
+        if (page->impressions != 0)
+            page->CTR = (100 * (page->clicks / page->impressions));
+        else
+            page->CTR = 0;
+    }
+}
+
+void webGraph::scoreCalc()
+{
+    for (auto page : webPages)
+    {
+        page->score = 0.4 * page->pageRank + ((1 - ((0.1 * page->impressions) / (1 + 0.1 * page->impressions)) * page->pageRank + ((0.1 * page->impressions) / (1 + 0.1 * page->impressions) * page->CTR) * 0.6));
+        //cout<<"PAGE SCORE: "<<page->score<<"\n";
+    }
 }
 
 void webGraph::addEdge(webPage *src, webPage *dst)
@@ -132,7 +158,7 @@ void webGraph::printAll()
         cout << "\nLogistics:\n";
         cout << "Impressions: " << it.first->impressions << "\n";
         cout << "Clicks: " << it.first->clicks << "\n";
-        cout << "CTR: " << it.first->ctr << "\n";
+        cout << "CTR: " << it.first->CTR << "\n";
         cout << "pageRank: " << it.first->pageRank << "\n";
         cout << "Score: " << it.first->score << "\n";
         cout << "hyperLinksCount: " << it.first->hyperLinksCount << "\n";
@@ -146,25 +172,25 @@ void webGraph::pageRankIteration()
     for (auto it : inv_adjList)
     {
         it.first->tempPageRank = 0;
-      //  cout<<it.first->URL<<"\n";
+        //  cout<<it.first->URL<<"\n";
         for (auto node : inv_adjList[it.first])
         {
-          //  cout<<node->URL<<" - "<<node->pageRank<<" - "<<node->hyperLinksCount<<"\n";
+            //  cout<<node->URL<<" - "<<node->pageRank<<" - "<<node->hyperLinksCount<<"\n";
             it.first->tempPageRank += node->pageRank / node->hyperLinksCount;
         }
     }
     for (auto it2 : webPages)
     {
         it2->pageRank = it2->tempPageRank;
-       // cout<<it2->URL<<"~~"<<it2->pageRank<<"\n";
+        // cout<<it2->URL<<"~~"<<it2->pageRank<<"\n";
     }
-   // cout<<"\n\n";
+    // cout<<"\n\n";
 }
 void webGraph::clearVisited()
 {
-    //initialize bool map to false/unvisited
-    for(auto page : webPages)
-    visited[page]=false;
+    // initialize bool map to false/unvisited
+    for (auto page : webPages)
+        visited[page] = false;
 }
 webGraph::~webGraph()
 {

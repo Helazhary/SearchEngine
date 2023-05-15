@@ -11,6 +11,11 @@ mainMenu::mainMenu()
          << "1. Perform a Search\n"
          << "2. Exit\n";
     cin >> menuChoices;
+    while (menuChoices < 1 || menuChoices > 2)
+    {
+        cout << "Invalid input, try again: ";
+        cin >> menuChoices;
+    }
     switch (menuChoices)
     {
     case (1):
@@ -24,7 +29,6 @@ mainMenu::mainMenu()
 }
 void mainMenu::searchDisplay()
 {
-    webGraph setup;
     // Assuming 2 words seperated by AND, OR, Quotations, or nothing(considered OR)
     system("clear");
     string query;
@@ -37,92 +41,130 @@ void mainMenu::searchDisplay()
     map<string, bool> keys;
     int pageNum = 0;
 
+cout<<"\n";
+for(auto word : searchWords)
+cout<<word<<"\n";
+cout<<"\n";
+
     // 1 word case
     if (searchWords.size() == 1)
     {
-        for (int web = 0; web < setup.webPages.size(); web++)
+        for (int web = 0; web < webPages.size(); web++)
         {
-            for (int i = 0; i < setup.webPages[web]->keyWords.size(); i++)
+            for (int i = 0; i < webPages[web]->keyWords.size(); i++)
             {
-                if (setup.webPages[web]->keyWords[i] == searchWords[0])
+                if (webPages[web]->keyWords[i] == searchWords[0])
                 {
-                    relevantWebPages.push_back(setup.webPages[web]);
+                    relevantWebPages.push_back(webPages[web]);
                 }
             }
         }
+        
         interactiveDisplay(relevantWebPages);
         relevantWebPages = {};
-        setup.clearVisited();
+        clearVisited();
+    } // parentheses case
+    else if (searchWords[0].front() == '\"')
+    {
+        cout << "\n";
+        cout << searchWords[0] << "\n";
+        cout << searchWords[1] << "\n";
+        searchWords[1].pop_back();
+        searchWords[0].erase(searchWords[0].begin());
+        cout << "\n";
+        cout << searchWords[0] << "\n";
+        cout << searchWords[1] << "\n";
+
+        for (int web = 0; web < webPages.size(); web++)
+        {
+            for (int i = 0; i < webPages[web]->keyWords.size(); i++)
+            {
+                if ((webPages[web]->keyWords[i] == (searchWords[0] + " " + searchWords[1]) && visited[webPages[web]] == false))
+                {
+
+                    relevantWebPages.push_back(webPages[web]);
+                    visited[webPages[web]] = true;
+                }
+            }
+        }
+      
+        interactiveDisplay(relevantWebPages);
+        relevantWebPages = {};
+        clearVisited();
     }
     // OR case
-    else if (searchWords[1] == "OR"||searchWords.size()==2)
+    else if (searchWords[1] == "OR")
     {
-        if(searchWords.size()==2)
+        if (searchWords.size() == 2)
         {
-            searchWords.insert(searchWords.begin()+1, "OR");
+            searchWords.insert(searchWords.begin() + 1, "OR");
         }
-        for (int web = 0; web < setup.webPages.size(); web++)
+        for (int web = 0; web < webPages.size(); web++)
         {
-            for (int i = 0; i < setup.webPages[web]->keyWords.size(); i++)
+            for (int i = 0; i < webPages[web]->keyWords.size(); i++)
             {
-                if ((setup.webPages[web]->keyWords[i] == searchWords[0] || setup.webPages[web]->keyWords[i] == searchWords[2]) && setup.visited[setup.webPages[web]] == false)
+                if ((webPages[web]->keyWords[i] == searchWords[0] || webPages[web]->keyWords[i] == searchWords[2]) && visited[webPages[web]] == false)
                 {
 
-                    relevantWebPages.push_back(setup.webPages[web]);
-                    setup.visited[setup.webPages[web]] = true;
+                    relevantWebPages.push_back(webPages[web]);
+                    visited[webPages[web]] = true;
                 }
             }
         }
 
+       
         interactiveDisplay(relevantWebPages);
         relevantWebPages = {};
-        setup.clearVisited();
-    }
+        clearVisited();
+    } // AND case
     else if (searchWords[1] == "AND")
     {
         keys[searchWords[0]] = false;
         keys[searchWords[2]] = false;
-        for (int web = 0; web < setup.webPages.size(); web++)
+        for (int web = 0; web < webPages.size(); web++)
         {
-            for (int i = 0; i < setup.webPages[web]->keyWords.size(); i++)
+            for (int i = 0; i < webPages[web]->keyWords.size(); i++)
             {
-                if (setup.webPages[web]->keyWords[i] == searchWords[0])
+                if (webPages[web]->keyWords[i] == searchWords[0])
                 {
                     keys[searchWords[0]] = true;
                 }
-                if (setup.webPages[web]->keyWords[i] == searchWords[2])
+                if (webPages[web]->keyWords[i] == searchWords[2])
                 {
                     keys[searchWords[2]] = true;
                 }
-                if (keys[searchWords[0]] == true && keys[searchWords[2]] == true && setup.visited[setup.webPages[web]] == false)
+                if (keys[searchWords[0]] == true && keys[searchWords[2]] == true && visited[webPages[web]] == false)
                 {
-                    relevantWebPages.push_back(setup.webPages[web]);
-                    setup.visited[setup.webPages[web]] = true;
+                    relevantWebPages.push_back(webPages[web]);
+                    visited[webPages[web]] = true;
 
                     keys[searchWords[0]] = false;
                     keys[searchWords[2]] = false;
+                    continue;
                 }
             }
         }
         keys[searchWords[0]] = false;
         keys[searchWords[2]] = false;
 
+   
         interactiveDisplay(relevantWebPages);
         relevantWebPages = {};
-        setup.clearVisited();
+        clearVisited();
     }
 }
 
+// Displays the websites the user can choose to select or make a new search//
 void mainMenu::interactiveDisplay(vector<webPage *> searchResults)
 {
-    for(auto page : searchResults)
+    for (auto page : searchResults)
     {
         page->impressions++;
     }
-    if(!searchResults.size()==0)
-    cout << "Here are the results:\n";
+    if (!searchResults.size() == 0)
+        cout << "Here are the results:\n";
     else
-    cout<<"No Results\n";
+        cout << "No Results\n";
 
     int pagenum = 0;
     for (auto page : searchResults)
@@ -133,32 +175,46 @@ void mainMenu::interactiveDisplay(vector<webPage *> searchResults)
     cout << "\nPlease select an option: \n1. Select website \n2.New Search \n3.Exit\n";
     int userChoice = -1;
     cin >> userChoice;
-
-    if(userChoice==1)
+    while (userChoice < 1 || userChoice > 3)
     {
-        int webSelection=-1;
-        cout<<"Which website would you like to visit: ";
-        cin>>webSelection;
-        while(webSelection>searchResults.size()||webSelection<=0)
-        {
-            cout<<"Invalid Input, try again: "
-            cin>>webSelection;
-        }
-        searchResults[webSelection]->clicks++;
-        
-        
+        cout << "Invalid input, try again: ";
+        cin >> userChoice;
     }
-    else if(userChoice==2)
+
+    if (userChoice == 1)
+    {
+        int webSelection = -1;
+        cout << "Which website would you like to visit: ";
+        cin >> webSelection;
+        while (webSelection > (int)searchResults.size() || webSelection <= 0)
+        {
+            cout << "Invalid Input, try again: ";
+            cin >> webSelection;
+        }
+        searchResults[webSelection - 1]->clicks++;
+        cout << "Visited: " << searchResults[webSelection - 1]->URL << "\n";
+        interactiveDisplay(searchResults);
+    }
+    else if (userChoice == 2)
     {
         searchDisplay();
     }
     else
     {
-        //store impressions and clicks
-    exit(1);
+        ofstream imp_click("impressions.csv");
+        if (!imp_click.is_open())
+        {
+            cout << "Error: Unable to open imp_click file.\n";
+        }
+
+        for (auto it : webPages)
+        {
+            imp_click << it->URL << "," << it->impressions << "," << it->clicks << endl;
+        }
+
+        // printAll();
+        exit(1);
     }
-    
-    
 }
 
 mainMenu::~mainMenu()

@@ -8,21 +8,21 @@ struct webPage
 {
     //--------Components of a webPage-------//
     string URL;
-    int impressions;
-    int clicks;
+    float impressions;
+    float clicks;
     float pageRank;
     float tempPageRank;
-    int ctr;
-    int score;
+    float CTR;
+    float score;
     int hyperLinksCount;
-    
+
     vector<string> keyWords;
 
     //----overloading Comparison Operator Using webPage score----//
-    bool operator<(const webPage &other) const
-    {
-        return score < other.score;
-    }
+    // bool operator<(const webPage &other) const
+    // {
+    //     return score < other.score;
+    // }
 
     //-----Initializing a webPage----------//
     webPage(string url)
@@ -30,7 +30,7 @@ struct webPage
         URL = url;
         impressions = 0;
         clicks = 0;
-        ctr = 0;
+        CTR = 0;
         pageRank = 0;
         score = 0;
         hyperLinksCount = 0;
@@ -48,22 +48,26 @@ public:
     vector<webPage *> webPages;
     // search list by webAddress/name
     map<string, webPage *> searchList;
-    //visisted checklist for search results
-    map<webPage*, bool> visited;
+    // visisted checklist for search results
+    map<webPage *, bool> visited;
     void clearVisited();
-    //for use in displaying results
+    // for use in displaying results
     vector<webPage *> webPageResults;
-
-    
-
     vector<string> parsingKeyWords(string sentence);
 
     void addEdge(webPage *src, webPage *dst);
     void addInvEdge(webPage *src, webPage *dst);
 
     void pageRankIteration();
+    void CTRCalc();
+    void scoreCalc();
 
     void printAll();
+
+    bool cmpPages(webPage *a, webPage *b)
+    {
+        return a->score > b->score;
+    }
 
     webGraph();
     ~webGraph();

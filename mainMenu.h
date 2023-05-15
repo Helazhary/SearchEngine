@@ -13,9 +13,8 @@ public:
     mainMenu();
     void searchDisplay();
     void interactiveDisplay(vector<webPage*> searchResults);
-    ~mainMenu();
-    
-    
+    void sortSearchResults(vector<webPage*> searchResults);
+    ~mainMenu();    
 
 private:
 
