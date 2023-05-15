@@ -41,10 +41,10 @@ void mainMenu::searchDisplay()
     map<string, bool> keys;
     int pageNum = 0;
 
-cout<<"\n";
-for(auto word : searchWords)
-cout<<word<<"\n";
-cout<<"\n";
+    cout << "\n";
+    for (auto word : searchWords)
+        cout << word << "\n";
+    cout << "\n";
 
     // 1 word case
     if (searchWords.size() == 1)
@@ -59,7 +59,8 @@ cout<<"\n";
                 }
             }
         }
-        
+
+        sort(relevantWebPages.begin(), relevantWebPages.end(), cmpScore);
         interactiveDisplay(relevantWebPages);
         relevantWebPages = {};
         clearVisited();
@@ -87,7 +88,7 @@ cout<<"\n";
                 }
             }
         }
-      
+
         interactiveDisplay(relevantWebPages);
         relevantWebPages = {};
         clearVisited();
@@ -112,7 +113,6 @@ cout<<"\n";
             }
         }
 
-       
         interactiveDisplay(relevantWebPages);
         relevantWebPages = {};
         clearVisited();
@@ -147,7 +147,6 @@ cout<<"\n";
         keys[searchWords[0]] = false;
         keys[searchWords[2]] = false;
 
-   
         interactiveDisplay(relevantWebPages);
         relevantWebPages = {};
         clearVisited();
@@ -212,9 +211,12 @@ void mainMenu::interactiveDisplay(vector<webPage *> searchResults)
             imp_click << it->URL << "," << it->impressions << "," << it->clicks << endl;
         }
 
-        // printAll();
         exit(1);
     }
+}
+bool mainMenu::cmpScore(webPage *x, webPage *y)
+{
+    return x->score < y->score;
 }
 
 mainMenu::~mainMenu()

@@ -18,12 +18,6 @@ struct webPage
 
     vector<string> keyWords;
 
-    //----overloading Comparison Operator Using webPage score----//
-    // bool operator<(const webPage &other) const
-    // {
-    //     return score < other.score;
-    // }
-
     //-----Initializing a webPage----------//
     webPage(string url)
     {

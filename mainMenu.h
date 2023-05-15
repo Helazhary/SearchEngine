@@ -13,6 +13,7 @@ public:
     mainMenu();
     void searchDisplay();
     void interactiveDisplay(vector<webPage*> searchResults);
+   static bool cmpScore(webPage *x, webPage *y);
     void sortSearchResults(vector<webPage*> searchResults);
     ~mainMenu();    
 
