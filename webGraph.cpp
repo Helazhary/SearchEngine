@@ -79,7 +79,6 @@ webGraph::webGraph()
             preKeyWords.erase(preKeyWords.begin());
         }
 
-        // cout<<web<<" ~ "<<preKeyWords<<"\n";
 
         extracKeyWords = utilities::parsingKeyWords(preKeyWords);
         searchList[web]->keyWords = extracKeyWords;
@@ -98,10 +97,10 @@ webGraph::webGraph()
     int iterations = 10;
     for(int i=0; i<iterations; i++)
     {
-        pageRankIteration();
-        
-
+        pageRankIteration(); 
     }
+
+    clearVisited();
     
 }
 
@@ -147,21 +146,26 @@ void webGraph::pageRankIteration()
     for (auto it : inv_adjList)
     {
         it.first->tempPageRank = 0;
-        cout<<it.first->URL<<"\n";
+      //  cout<<it.first->URL<<"\n";
         for (auto node : inv_adjList[it.first])
         {
-            cout<<node->URL<<" - "<<node->pageRank<<" - "<<node->hyperLinksCount<<"\n";
+          //  cout<<node->URL<<" - "<<node->pageRank<<" - "<<node->hyperLinksCount<<"\n";
             it.first->tempPageRank += node->pageRank / node->hyperLinksCount;
         }
     }
     for (auto it2 : webPages)
     {
         it2->pageRank = it2->tempPageRank;
-        cout<<it2->URL<<"~~"<<it2->pageRank<<"\n";
+       // cout<<it2->URL<<"~~"<<it2->pageRank<<"\n";
     }
-    cout<<"\n\n";
+   // cout<<"\n\n";
 }
-
+void webGraph::clearVisited()
+{
+    //initialize bool map to false/unvisited
+    for(auto page : webPages)
+    visited[page]=false;
+}
 webGraph::~webGraph()
 {
 }

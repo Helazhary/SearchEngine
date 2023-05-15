@@ -1,12 +1,21 @@
 #ifndef MAINMENU_H
 #define MAINMENU_H
+#include <bits/stdc++.h>
+#include "webGraph.h"
+using namespace std;
+
+#pragma once
 
 
-class mainMenu
+class mainMenu : public webGraph
 {
 public:
     mainMenu();
+    void searchDisplay();
+    void interactiveDisplay(vector<webPage*> searchResults);
     ~mainMenu();
+    
+    
 
 private:
 

@@ -48,6 +48,13 @@ public:
     vector<webPage *> webPages;
     // search list by webAddress/name
     map<string, webPage *> searchList;
+    //visisted checklist for search results
+    map<webPage*, bool> visited;
+    void clearVisited();
+    //for use in displaying results
+    vector<webPage *> webPageResults;
+
+    
 
     vector<string> parsingKeyWords(string sentence);
 
